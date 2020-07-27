@@ -15,6 +15,9 @@
 
 # # Visualizing COVID-19 cases in Ontario
 # By Kendra Oudyk
+#
+# ### How to run this code
+# <font color='red'>In the above ribbon, click **cell** and then click **Run All**</font> 
 
 # +
 import pandas as pd 
