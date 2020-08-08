@@ -296,38 +296,3 @@ if __name__ == '__main__':
     
     plt.show()
     
-
-# -
-# ## Visualize the timeline for each PHU in a separate plot
-
-
-# +
-# # visualize
-# matplotlib.rc('font', size = 22)
-# matplotlib.rc('figure', max_open_warning = 0)
-
-# ymax = np.max(data.loc[:, data.columns != 'Date'].values) + 2
-# ymin = - .03
-# linewidth = 4
-
-# alpha = .1
-# days = 14
-# for phu in phus:
-    
-#     p = data[phu]
-#     t = datetimes
-    
-#     fig, ax = plt.subplots(figsize=(20, 10))
-    
-#     ax.plot(datetimes, p, color='black', linewidth=linewidth)
-    
-#     ax.axhspan(ymin, 0.05*days, facecolor='blue', alpha=alpha)
-#     ax.axhspan(0.05*days, 0.1*days, facecolor='green', alpha=alpha)
-#     ax.axhspan(0.1*days, 0.25*days, facecolor='yellow', alpha=alpha)
-#     ax.axhspan(0.25*days, 0.5*days, facecolor='darkorange', alpha=alpha)
-#     ax.axhspan(0.5*days, ymax, facecolor='red', alpha=alpha)
-    
-#     plt.ylim([ymin, ymax])
-#     plt.xlabel('Date')
-#     plt.ylabel('# infected per 10,000\nin past 14 days')
-#     plt.title('%s' %phu)
