@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.3.0
+#       jupytext_version: 1.5.2
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -92,9 +92,9 @@ cases['Date'] = [int(str(s).replace('-', '')) for s in cases['Date']]
 
 
 # ### get a list of all dates until today
-# We want to begin at Jan 1, 2020, but we're looking at cases in 14-day periods, so we'll start the timeline 14 days before (inclusive of) Jan 1.  
+# We want to begin at Feb 15, 2020, but we're looking at cases in 14-day periods, so we'll start the timeline 14 days before (inclusive of) Feb 15.  
 
-d1 = datetime.date(2019,12,18)
+d1 = datetime.date(2020,2,15)
 d2 = datetime.date.today()
 datetimes = [(d1 + datetime.timedelta(days=x)) for x in range((d2-d1).days + 1)]
 dates = [int(str(s).replace('-', '')) for s in datetimes]
@@ -109,6 +109,7 @@ data = pd.DataFrame()
 data['Date'] = dates
 
 days_in_range = 14
+overall_begin_date = 20200215 # february 15 2020
 phus = np.unique(cases['Reporting_PHU'])  
 for phu in phus:
     population = int(phu_populations[phu])
@@ -118,33 +119,31 @@ for phu in phus:
     
     daily_rate = []
     for n, date in enumerate(dates):
-        # select the cases for the given date, in the given PHU
-        begin_date = date
-        i_end_date = np.min([len(dates) - 1, n + days_in_range])
-        end_date = dates[i_end_date]
-        phu_cases_in_current_dates = phu_cases[phu_cases['Date'].\
-                                               between(begin_date, end_date)]
-        
-        # calculate the infection rate
-        n_cases = len(phu_cases_in_current_dates)
-        rate = n_cases / population * 10000
-        daily_rate.append(rate)
+        if date >= overall_begin_date: # if it's after Feb 15
+            # select the cases for the given date, in the given PHU
+            i_begin_date = n - days_in_range + 1 # add 1 because it's 14 days inclusive
+            begin_date = dates[i_begin_date]
+            end_date = date
+            phu_cases_in_current_dates = phu_cases[phu_cases['Date'].\
+                                                   between(begin_date, end_date)]
+            
+
+            # calculate the infection rate
+            n_cases = len(phu_cases_in_current_dates)
+            rate = n_cases / population * 10000
+            daily_rate.append(rate)
     data[phu] = daily_rate
-
-# +
-# remove last 14 days (incl today) and the days before Feb 15 (before which there are few cases)
-# NOTE we're INCLUDING Feb 15, and INCLUDING the date exactly 14 days ago
-begin_date_incl = 20200215 # the first date, inclusive ( february 15, 2020)
-end_date_excl = dates[-days_in_range] # the last date, exclusive
-data = data.loc[data['Date'] >= begin_date_incl] # select data after Feb 15
-data = data.loc[data['Date'] < end_date_excl] # select data before 14 days ago 
-
-index_of_begin_date = np.where(np.array(dates) == begin_date_incl)[0][0]
-index_of_end_date = np.where(np.array(dates) == end_date_excl)[0][0]
-datetimes = datetimes[index_of_begin_date: index_of_end_date] #  select datetimes after Feb 15 & before 14 days ago
-
-data.head(4) # visualize the first few rows
 # -
+
+# ### Inspect the first 3 rows
+# to see if the dates start as expected
+
+data.head(3)
+
+# ### Inspect the last 3 rows
+# to see if the dates end as expected
+
+data.tail(3)
 
 # ## Visualize the timelines for all PHUs on the same interactive plot
 
@@ -297,7 +296,7 @@ if __name__ == '__main__':
     
     plt.show()
     
-plt.savefig('test.')
+
 # -
 # ## Visualize the timeline for each PHU in a separate plot
 
