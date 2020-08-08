@@ -1,5 +1,5 @@
 # covid19-ontario
-Tracking COVID-19 cases in Ontario
+Tracking COVID-19 cases in Ontario, in each regional Public Health Unit. 
 
 ## Running the notebook
 ### Run it virtually on Binder (recommended for non-programmers)
