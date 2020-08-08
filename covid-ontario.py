@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.5.2
+#       jupytext_version: 1.3.0
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -130,11 +130,19 @@ for phu in phus:
         rate = n_cases / population * 10000
         daily_rate.append(rate)
     data[phu] = daily_rate
-    
-# remove last 14 days
-data = data[:-days_in_range]
-datetimes = datetimes[:-days_in_range]
-    
+
+# +
+# remove last 14 days (incl today) and the days before Feb 15 (before which there are few cases)
+# NOTE we're INCLUDING Feb 15, and INCLUDING the date exactly 14 days ago
+begin_date_incl = 20200215 # the first date, inclusive ( february 15, 2020)
+end_date_excl = dates[-days_in_range] # the last date, exclusive
+data = data.loc[data['Date'] >= begin_date_incl] # select data after Feb 15
+data = data.loc[data['Date'] < end_date_excl] # select data before 14 days ago 
+
+index_of_begin_date = np.where(np.array(dates) == begin_date_incl)[0][0]
+index_of_end_date = np.where(np.array(dates) == end_date_excl)[0][0]
+datetimes = datetimes[index_of_begin_date: index_of_end_date] #  select datetimes after Feb 15 & before 14 days ago
+
 data.head(4) # visualize the first few rows
 # -
 
